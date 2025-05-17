@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
 import Die from "./component/Die.jsx";
 import Scoreboard from "./component/Scoreboard.jsx";
 import "./App.css";
-import { preinit } from "react-dom";
 
 export default function App() {
   const [diceData, setDiceData] = useState(() => displayDice());
@@ -102,6 +101,105 @@ export default function App() {
     };
   }
 
+  useEffect(() => {
+    const newUpper = { ...scoreData.upper };
+    const newLower = { ...scoreData.lower };
+
+    // Calculate Totals from 1 - 6
+    for (let i = 1; i <= 6; i++) {
+      const count = diceData.filter((d) => d.value === i).length;
+      const key = ["aces", "twos", "threes", "fours", "fives", "sixes"][i - 1];
+
+      if (!newUpper[key].lock) {
+        newUpper[key] = {
+          ...newUpper[key],
+          value: count * i,
+        };
+      }
+    }
+
+    // SUM
+    const sumOfHand = diceData.reduce((sum, die) => sum + die.value, 0);
+
+    // Chance
+    if (!newLower["chance"].lock) {
+      newLower["chance"].value = sumOfHand;
+    }
+
+    // Three of a kind
+    if (!newLower["oak3"].lock) {
+      const hasThreeOfKind = diceData.some((die) => {
+        const count = diceData.filter((d) => d.value === die.value).length;
+        return count >= 3;
+      });
+      newLower["oak3"].value = hasThreeOfKind ? sumOfHand : 0;
+    }
+
+    // Four of a kind
+    if (!newLower["oak4"].lock) {
+      const hasFourOfKind = diceData.some((die) => {
+        const count = diceData.filter((d) => d.value === die.value).length;
+        return count >= 4;
+      });
+      newLower["oak4"].value = hasFourOfKind ? sumOfHand : 0;
+    }
+
+    // Full House
+    if (!newLower["fhouse"].lock) {
+      const fhCounts = {};
+      diceData.forEach((die) => {
+        fhCounts[die.value] = (fhCounts[die.value] || 0) + 1;
+      });
+
+      const values = Object.values(fhCounts);
+      const isFullHouse = values.includes(3) && values.includes(2);
+
+      newLower["fhouse"].value = isFullHouse ? 25 : 0;
+    }
+
+    // Sm. Straight
+    if (!newLower["straightSM"].lock) {
+      const uniqueSortedSM = [...new Set(diceData.map((d) => d.value))].sort(
+        (a, b) => a - b,
+      );
+      const asString = uniqueSortedSM.join("");
+
+      const smStraights = ["12345", "23456"];
+      const isSMStraight = smStraights.includes(asString);
+
+      newLower["straightSM"].value = isSMStraight ? 30 : 0;
+    }
+
+    // Lg. Straight
+    if (!newLower["straightLG"].lock) {
+      const uniqueSortedLG = [...new Set(diceData.map((d) => d.value))].sort(
+        (a, b) => a - b,
+      );
+      const asString = uniqueSortedLG.join("");
+
+      const lgStraights = ["1234", "2345", "3456"];
+      const isLGStraight = lgStraights.includes(asString);
+
+      newLower["straightSM"].value = isLGStraight ? 30 : 0;
+    }
+
+    // Yacht
+    if (!newLower["yacht"].lock) {
+      const hasYacht = diceData.some((die) => {
+        const count = diceData.filter((d) => d.value === die.value).length;
+        return count >= 5;
+      });
+      newLower["yacht"].value = hasYacht ? 50 : 0;
+    }
+
+    // Change the Data
+    setScoreData((prevState) => ({
+      ...prevState,
+      upper: newUpper,
+      lower: newLower,
+    }));
+  }, [diceData]);
+
   function rollDice() {
     if (gameData.rolls > 0) {
       setDiceData((prevState) =>
@@ -112,7 +210,7 @@ export default function App() {
       setGameData((prevState) => ({
         ...prevState,
         rolls: prevState.rolls - 1,
-        active: prevState.rolls - 1 > 0,
+        active: true,
       }));
     }
   }
@@ -150,13 +248,14 @@ export default function App() {
       <h1>Yacht Dice Game</h1>
       <div className={"container"}>
         <div className={"scoreboard"}>
-          <Scoreboard scoreData={scoreData} />
+          <Scoreboard scoreData={scoreData} gameActive={gameData.active} />
         </div>
         <div className={"dice-board"}>
           <h1>Table</h1>
           <div>{diceObjs}</div>
           <button
             onClick={() => rollDice()}
+            disabled={!(gameData.rolls > 0)}
           >{`Roll Dice (${gameData.rolls} rolls left)`}</button>
           <button onClick={() => startGame()}>Start Game</button>
         </div>

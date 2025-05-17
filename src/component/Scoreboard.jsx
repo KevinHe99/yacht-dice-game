@@ -1,4 +1,8 @@
-export default function Scoreboard({ scoreData }) {
+export default function Scoreboard({ scoreData, gameActive }) {
+  function displayScore(gameActiveState, lock, score) {
+    return gameActiveState || lock ? score : "";
+  }
+
   return (
     <>
       <h1>Scoreboard</h1>
@@ -9,27 +13,58 @@ export default function Scoreboard({ scoreData }) {
           </tr>
           <tr>
             <td>Aces</td>
-            <td className={"score"}>{scoreData.upper.aces.value}</td>
+            <td className={"score"}>
+              {displayScore(
+                gameActive,
+                scoreData.upper.aces.lock,
+                scoreData.upper.aces.value,
+              )}
+            </td>
           </tr>
           <tr>
             <td>Twos</td>
-            <td className={"score"}>{scoreData.upper.twos.value}</td>
+            <td className={"score"}>
+              {displayScore(
+                gameActive,
+                scoreData.upper.twos.lock,
+                scoreData.upper.twos.value,
+              )}</td>
           </tr>
           <tr>
             <td>Threes</td>
-            <td className={"score"}>{scoreData.upper.threes.value}</td>
+            <td className={"score"}>
+              {displayScore(
+                gameActive,
+                scoreData.upper.threes.lock,
+                scoreData.upper.threes.value,
+              )}</td>
           </tr>
           <tr>
             <td>Fours</td>
-            <td className={"score"}>{scoreData.upper.fours.value}</td>
+            <td className={"score"}>
+              {displayScore(
+                gameActive,
+                scoreData.upper.fours.lock,
+                scoreData.upper.fours.value,
+              )}</td>
           </tr>
           <tr>
             <td>Fives</td>
-            <td className={"score"}>{scoreData.upper.fives.value}</td>
+            <td className={"score"}>
+              {displayScore(
+                gameActive,
+                scoreData.upper.fives.lock,
+                scoreData.upper.fives.value,
+              )}</td>
           </tr>
           <tr>
             <td>Sixes</td>
-            <td className={"score"}>{scoreData.upper.sixes.value}</td>
+            <td className={"score"}>
+              {displayScore(
+                gameActive,
+                scoreData.upper.sixes.lock,
+                scoreData.upper.sixes.value,
+              )}</td>
           </tr>
           <tr>
             <td>Total Score</td>
@@ -62,31 +97,66 @@ export default function Scoreboard({ scoreData }) {
           </tr>
           <tr>
             <td>Chance</td>
-            <td className={"score"}>{scoreData.lower.chance.value}</td>
+            <td className={"score"}>
+              {displayScore(
+                gameActive,
+                scoreData.lower.chance.lock,
+                scoreData.lower.chance.value,
+              )}</td>
           </tr>
           <tr>
             <td>3 of a Kind</td>
-            <td className={"score"}>{scoreData.lower.oak3.value}</td>
+            <td className={"score"}>
+              {displayScore(
+                gameActive,
+                scoreData.lower.oak3.lock,
+                scoreData.lower.oak3.value,
+              )}</td>
           </tr>
           <tr>
             <td>4 of a Kind</td>
-            <td className={"score"}>{scoreData.lower.oak4.value}</td>
+            <td className={"score"}>
+              {displayScore(
+                gameActive,
+                scoreData.lower.oak4.lock,
+                scoreData.lower.oak4.value,
+              )}</td>
           </tr>
           <tr>
             <td>Full House</td>
-            <td className={"score"}>{scoreData.lower.fhouse.value}</td>
+            <td className={"score"}>
+              {displayScore(
+                gameActive,
+                scoreData.lower.fhouse.lock,
+                scoreData.lower.fhouse.value,
+              )}</td>
           </tr>
           <tr>
             <td>Sm. Straight</td>
-            <td className={"score"}>{scoreData.lower.straightSM.value}</td>
+            <td className={"score"}>
+              {displayScore(
+                gameActive,
+                scoreData.lower.straightSM.lock,
+                scoreData.lower.straightSM.value,
+              )}</td>
           </tr>
           <tr>
             <td>Lg. Straight</td>
-            <td className={"score"}>{scoreData.lower.straightLG.value}</td>
+            <td className={"score"}>
+              {displayScore(
+                gameActive,
+                scoreData.lower.straightLG.lock,
+                scoreData.lower.straightLG.value,
+              )}</td>
           </tr>
           <tr>
             <td>Yacht</td>
-            <td className={"score"}>{scoreData.lower.yacht.value}</td>
+            <td className={"score"}>
+              {displayScore(
+                gameActive,
+                scoreData.lower.yacht.lock,
+                scoreData.lower.yacht.value,
+              )}</td>
           </tr>
           <tr>
             <td style={{ fontWeight: "bold" }}>Lower Score</td>
