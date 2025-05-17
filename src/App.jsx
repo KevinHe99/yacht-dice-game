@@ -3,10 +3,20 @@ import { nanoid } from "nanoid";
 import Die from "./component/Die.jsx";
 import Scoreboard from "./component/Scoreboard.jsx";
 import "./App.css";
+import { preinit } from "react-dom";
 
 export default function App() {
-  const [diceData, setDiceData] = useState(() => generateDiceData());
+  const [diceData, setDiceData] = useState(() => displayDice());
   const [scoreData, setScoreData] = useState(() => generateScoreData());
+  const [gameData, setGameData] = useState(() => generateGameData());
+
+  function displayDice() {
+    return new Array(5).fill(0).map(() => ({
+      value: 6,
+      isHeld: false,
+      id: nanoid(),
+    }));
+  }
 
   function generateDiceData() {
     return new Array(5).fill(0).map(() => ({
@@ -85,12 +95,26 @@ export default function App() {
     };
   }
 
+  function generateGameData() {
+    return {
+      rolls: 3,
+      active: false,
+    };
+  }
+
   function rollDice() {
-    setDiceData((prevState) =>
-      prevState.map((item) =>
-        item.isHeld ? item : { ...item, value: Math.ceil(Math.random() * 6) },
-      ),
-    );
+    if (gameData.rolls > 0) {
+      setDiceData((prevState) =>
+        prevState.map((item) =>
+          item.isHeld ? item : { ...item, value: Math.ceil(Math.random() * 6) },
+        ),
+      );
+      setGameData((prevState) => ({
+        ...prevState,
+        rolls: prevState.rolls - 1,
+        active: prevState.rolls - 1 > 0,
+      }));
+    }
   }
 
   function holdDie(id) {
@@ -99,6 +123,17 @@ export default function App() {
         item.id === id ? { ...item, isHeld: !item.isHeld } : item,
       ),
     );
+  }
+
+  function startGame() {
+    if (!gameData.active) {
+      setDiceData(displayDice());
+      setGameData(generateGameData());
+      setGameData((prevState) => ({
+        ...prevState,
+        active: true,
+      }));
+    }
   }
 
   const diceObjs = diceData.map((item) => (
@@ -120,7 +155,10 @@ export default function App() {
         <div className={"dice-board"}>
           <h1>Table</h1>
           <div>{diceObjs}</div>
-          <button onClick={() => rollDice()}>Roll</button>
+          <button
+            onClick={() => rollDice()}
+          >{`Roll Dice (${gameData.rolls} rolls left)`}</button>
+          <button onClick={() => startGame()}>Start Game</button>
         </div>
       </div>
     </>
