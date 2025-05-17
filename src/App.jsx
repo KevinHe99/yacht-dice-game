@@ -20,6 +20,7 @@ export default function App() {
     return {
       upper: {
         score: 0,
+        scoreWBonus: 0,
         aces: {
           value: 0,
           lock: false,

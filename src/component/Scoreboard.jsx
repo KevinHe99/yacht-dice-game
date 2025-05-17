@@ -34,7 +34,7 @@ export default function Scoreboard({ scoreData }) {
           <tr>
             <td>Total Score</td>
             <td className={"score"}>
-              {scoreData.upper.bonus.value}
+              {scoreData.upper.score}
               <span style={{ fontWeight: "bold" }}>/63</span>
             </td>
           </tr>
@@ -50,7 +50,7 @@ export default function Scoreboard({ scoreData }) {
             <td style={{ fontWeight: "bold" }}>Upper Score</td>
             <td className={"score"}>
               <span style={{ fontWeight: "bold" }}>
-                {scoreData.upper.score}
+                {scoreData.upper.scoreWBonus}
               </span>
             </td>
           </tr>
@@ -90,14 +90,20 @@ export default function Scoreboard({ scoreData }) {
           </tr>
           <tr>
             <td style={{ fontWeight: "bold" }}>Lower Score</td>
-            <td className={"score"}>{scoreData.lower.score}</td>
+            <td className={"score"}>
+              <span style={{ fontWeight: "bold" }}>
+                {scoreData.lower.score}
+              </span>
+            </td>
           </tr>
           <tr>
             <td className="seperator" colSpan={2}></td>
           </tr>
           <tr>
             <td style={{ fontWeight: "bold" }}>Total Score</td>
-            <td className={"score"}>{scoreData.total}</td>
+            <td className={"score"}>
+              <span style={{ fontWeight: "bold" }}>{scoreData.total}</span>
+            </td>
           </tr>
         </tbody>
       </table>
