@@ -2,6 +2,13 @@
   font-family: "JetBrains Mono", monospace;
 }
 
+.no-select {
+  user-select: none;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* Internet Explorer/Edge */
+}
+
 table, th, td {
   border: 1px solid black;
   border-collapse: collapse;

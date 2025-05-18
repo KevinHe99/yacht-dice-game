@@ -1,7 +1,15 @@
-export default function Scoreboard({ scoreData, gameActive }) {
+export default function Scoreboard({ scoreData, gameActive, handleClick }) {
   function displayScore(gameActiveState, lock, score) {
     return gameActiveState || lock ? score : "";
   }
+
+  const scoreBoxStyle = (gameActiveState, lock) => {
+    return {
+      textAlign: "right",
+      width: "50px",
+      backgroundColor: gameActiveState && !lock ? "#EDBF85" : "",
+    };
+  };
 
   return (
     <>
@@ -13,7 +21,7 @@ export default function Scoreboard({ scoreData, gameActive }) {
           </tr>
           <tr>
             <td>Aces</td>
-            <td className={"score"}>
+            <td className={"score no-select"} onClick={handleClick}>
               {displayScore(
                 gameActive,
                 scoreData.upper.aces.lock,
@@ -28,7 +36,8 @@ export default function Scoreboard({ scoreData, gameActive }) {
                 gameActive,
                 scoreData.upper.twos.lock,
                 scoreData.upper.twos.value,
-              )}</td>
+              )}
+            </td>
           </tr>
           <tr>
             <td>Threes</td>
@@ -37,7 +46,8 @@ export default function Scoreboard({ scoreData, gameActive }) {
                 gameActive,
                 scoreData.upper.threes.lock,
                 scoreData.upper.threes.value,
-              )}</td>
+              )}
+            </td>
           </tr>
           <tr>
             <td>Fours</td>
@@ -46,7 +56,8 @@ export default function Scoreboard({ scoreData, gameActive }) {
                 gameActive,
                 scoreData.upper.fours.lock,
                 scoreData.upper.fours.value,
-              )}</td>
+              )}
+            </td>
           </tr>
           <tr>
             <td>Fives</td>
@@ -55,7 +66,8 @@ export default function Scoreboard({ scoreData, gameActive }) {
                 gameActive,
                 scoreData.upper.fives.lock,
                 scoreData.upper.fives.value,
-              )}</td>
+              )}
+            </td>
           </tr>
           <tr>
             <td>Sixes</td>
@@ -64,7 +76,8 @@ export default function Scoreboard({ scoreData, gameActive }) {
                 gameActive,
                 scoreData.upper.sixes.lock,
                 scoreData.upper.sixes.value,
-              )}</td>
+              )}
+            </td>
           </tr>
           <tr>
             <td>Total Score</td>
@@ -102,7 +115,8 @@ export default function Scoreboard({ scoreData, gameActive }) {
                 gameActive,
                 scoreData.lower.chance.lock,
                 scoreData.lower.chance.value,
-              )}</td>
+              )}
+            </td>
           </tr>
           <tr>
             <td>3 of a Kind</td>
@@ -111,7 +125,8 @@ export default function Scoreboard({ scoreData, gameActive }) {
                 gameActive,
                 scoreData.lower.oak3.lock,
                 scoreData.lower.oak3.value,
-              )}</td>
+              )}
+            </td>
           </tr>
           <tr>
             <td>4 of a Kind</td>
@@ -120,7 +135,8 @@ export default function Scoreboard({ scoreData, gameActive }) {
                 gameActive,
                 scoreData.lower.oak4.lock,
                 scoreData.lower.oak4.value,
-              )}</td>
+              )}
+            </td>
           </tr>
           <tr>
             <td>Full House</td>
@@ -129,7 +145,8 @@ export default function Scoreboard({ scoreData, gameActive }) {
                 gameActive,
                 scoreData.lower.fhouse.lock,
                 scoreData.lower.fhouse.value,
-              )}</td>
+              )}
+            </td>
           </tr>
           <tr>
             <td>Sm. Straight</td>
@@ -138,7 +155,8 @@ export default function Scoreboard({ scoreData, gameActive }) {
                 gameActive,
                 scoreData.lower.straightSM.lock,
                 scoreData.lower.straightSM.value,
-              )}</td>
+              )}
+            </td>
           </tr>
           <tr>
             <td>Lg. Straight</td>
@@ -147,7 +165,8 @@ export default function Scoreboard({ scoreData, gameActive }) {
                 gameActive,
                 scoreData.lower.straightLG.lock,
                 scoreData.lower.straightLG.value,
-              )}</td>
+              )}
+            </td>
           </tr>
           <tr>
             <td>Yacht</td>
@@ -156,7 +175,8 @@ export default function Scoreboard({ scoreData, gameActive }) {
                 gameActive,
                 scoreData.lower.yacht.lock,
                 scoreData.lower.yacht.value,
-              )}</td>
+              )}
+            </td>
           </tr>
           <tr>
             <td style={{ fontWeight: "bold" }}>Lower Score</td>

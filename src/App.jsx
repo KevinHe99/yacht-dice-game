@@ -102,6 +102,10 @@ export default function App() {
   }
 
   useEffect(() => {
+    console.log("effect pre")
+    if (!gameData.active) return;
+    console.log("effect post")
+
     const newUpper = { ...scoreData.upper };
     const newLower = { ...scoreData.lower };
 
@@ -223,16 +227,16 @@ export default function App() {
     );
   }
 
-  function startGame() {
-    if (!gameData.active) {
-      setDiceData(displayDice());
-      setGameData(generateGameData());
-      setGameData((prevState) => ({
-        ...prevState,
-        active: true,
-      }));
-    }
-  }
+  // function startGame() {
+  //   if (!gameData.active) {
+  //     setDiceData(displayDice());
+  //     setGameData(generateGameData());
+  //     setGameData((prevState) => ({
+  //       ...prevState,
+  //       active: true,
+  //     }));
+  //   }
+  // }
 
   const diceObjs = diceData.map((item) => (
     <Die
@@ -243,21 +247,49 @@ export default function App() {
     />
   ));
 
+  function handleClick() {
+    const newUpper = scoreData.upper
+    newUpper["aces"].lock = true
+
+    setScoreData((prevState) => ({
+      ...prevState,
+      upper: newUpper,
+    }));
+    newRound()
+
+  }
+
+  function newRound() {
+    setGameData(prevState => (
+      {
+        ...prevState,
+        active: false,
+        rolls: 3
+      }
+    ))
+    setDiceData(displayDice())
+  }
+
   return (
     <>
       <h1>Yacht Dice Game</h1>
       <div className={"container"}>
         <div className={"scoreboard"}>
-          <Scoreboard scoreData={scoreData} gameActive={gameData.active} />
+          <Scoreboard
+            scoreData={scoreData}
+            gameActive={gameData.active}
+            handleClick={handleClick}
+          />
         </div>
         <div className={"dice-board"}>
-          <h1>Table</h1>
+          <h1>Dice Table</h1>
           <div>{diceObjs}</div>
+          <br/>
           <button
             onClick={() => rollDice()}
             disabled={!(gameData.rolls > 0)}
           >{`Roll Dice (${gameData.rolls} rolls left)`}</button>
-          <button onClick={() => startGame()}>Start Game</button>
+          {/*<button onClick={() => startGame()}>Start Game</button>*/}
         </div>
       </div>
     </>
