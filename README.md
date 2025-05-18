@@ -13,7 +13,7 @@ your browser.
 - Clean and responsive UI
 
 ## Preview 
-![Demo picture](../assets/screenshot.png?raw=true)
+![Demo picture](assets/screenshot.png?raw=true)
 
 ## Tech Stack 
 - **React** – UI component library
