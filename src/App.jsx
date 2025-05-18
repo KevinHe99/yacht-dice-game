@@ -86,7 +86,7 @@ export default function App() {
         },
       },
     };
-  }
+  }``
 
   function generateGameData() {
     return {
@@ -97,9 +97,17 @@ export default function App() {
   }
 
   useEffect(() => {
+
     gameButtonRef.current.textContent = "Roll to Begin"
 
-    const storedScoreHistory = JSON.parse(localStorage.getItem("scoreHistory"));
+    let storedScoreHistory;
+    try {
+      const raw = localStorage.getItem("scoreHistory");
+      storedScoreHistory = raw ? JSON.parse(raw) : [];
+    } catch {
+      storedScoreHistory = [];
+    }
+
     setScoreHistory(storedScoreHistory)
 
   }, [])

@@ -1,5 +1,5 @@
 export default function ScoreHistory({ scoreHistory }) {
-  const scoreDisplay = scoreHistory.map((item, key) => (
+  const scoreDisplay = scoreHistory?.map((item, key) => (
     <tr key={key}>
       <td
         style={
