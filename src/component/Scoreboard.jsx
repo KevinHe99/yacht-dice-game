@@ -3,13 +3,13 @@ export default function Scoreboard({ scoreData, gameActive, handleClick }) {
     return gameActiveState || lock ? score : "";
   }
 
-  const scoreBoxStyle = (gameActiveState, lock) => {
-    return {
-      textAlign: "right",
-      width: "50px",
-      backgroundColor: gameActiveState && !lock ? "#EDBF85" : "",
-    };
-  };
+  // const scoreBoxStyle = (gameActiveState, lock) => {
+  //   return {
+  //     textAlign: "right",
+  //     width: "50px",
+  //     backgroundColor: gameActiveState && !lock ? "#EDBF85" : "",
+  //   };
+  // };
 
   return (
     <>
