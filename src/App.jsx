@@ -1,25 +1,20 @@
-import { useEffect, useState } from "react";
-import { nanoid } from "nanoid";
+import {useEffect, useRef, useState} from "react";
+import {nanoid} from "nanoid";
 import Die from "./component/Die.jsx";
 import Scoreboard from "./component/Scoreboard.jsx";
 import "./App.css";
+import {categoryScores, qualifyStraightSm, qualifyStraightLg, upperCategory} from "./constants/constants.js";
 
 export default function App() {
   const [diceData, setDiceData] = useState(() => displayDice());
   const [scoreData, setScoreData] = useState(() => generateScoreData());
   const [gameData, setGameData] = useState(() => generateGameData());
 
+  const gameButtonRef = useRef(null);
+
   function displayDice() {
     return new Array(5).fill(0).map(() => ({
-      value: 1,
-      isHeld: false,
-      id: nanoid(),
-    }));
-  }
-
-  function generateDiceData() {
-    return new Array(5).fill(0).map(() => ({
-      value: Math.ceil(Math.random() * 6),
+      value: "X",
       isHeld: false,
       id: nanoid(),
     }));
@@ -69,15 +64,15 @@ export default function App() {
           value: 0,
           lock: false,
         },
-        fhouse: {
+        fHouse: {
           value: 0,
           lock: false,
         },
-        straightSM: {
+        straightSm: {
           value: 0,
           lock: false,
         },
-        straightLG: {
+        straightLg: {
           value: 0,
           lock: false,
         },
@@ -93,20 +88,30 @@ export default function App() {
     return {
       rolls: 3,
       active: false,
+      round: 1
     };
   }
 
   useEffect(() => {
-    console.log("effect pre")
+    gameButtonRef.current.textContent = "Roll to Begin"
+  }, [])
+
+  useEffect(() => {
+    if (gameData.round > 13) {
+      console.log("End Game")
+      console.log(`Congratulations! Final score: ${scoreData.total.total}`)
+    }
+  }, [gameData.round]);
+
+  useEffect(() => {
     if (!gameData.active) return;
-    console.log("effect post")
 
     const newCategory = {...scoreData.category};
 
     // Calculate Totals from 1 - 6
     for (let i = 1; i <= 6; i++) {
       const count = diceData.filter((d) => d.value === i).length;
-      const key = ["aces", "twos", "threes", "fours", "fives", "sixes"][i - 1];
+      const key = upperCategory[i - 1];
 
       if (!newCategory[key].lock) {
         newCategory[key] = {
@@ -143,7 +148,7 @@ export default function App() {
     }
 
     // Full House
-    if (!newCategory["fhouse"].lock) {
+    if (!newCategory["fHouse"].lock) {
       const fhCounts = {};
       diceData.forEach((die) => {
         fhCounts[die.value] = (fhCounts[die.value] || 0) + 1;
@@ -152,33 +157,31 @@ export default function App() {
       const values = Object.values(fhCounts);
       const isFullHouse = values.includes(3) && values.includes(2);
 
-      newCategory["fhouse"].value = isFullHouse ? 25 : 0;
+      newCategory["fHouse"].value = isFullHouse ? categoryScores.fHouse : 0;
     }
 
     // Sm. Straight
-    if (!newCategory["straightSM"].lock) {
+    if (!newCategory["straightSm"].lock) {
       const uniqueSortedSM = [...new Set(diceData.map((d) => d.value))].sort(
         (a, b) => a - b,
       );
+
       const asString = uniqueSortedSM.join("");
+      const isSmStraight = qualifyStraightSm.includes(asString);
 
-      const smStraights =["1234", "2345", "3456"];
-      const isSMStraight = smStraights.includes(asString);
-
-      newCategory["straightSM"].value = isSMStraight ? 30 : 0;
+      newCategory["straightSm"].value = isSmStraight ? categoryScores.straightSm : 0;
     }
 
     // Lg. Straight
-    if (!newCategory["straightLG"].lock) {
+    if (!newCategory["straightLg"].lock) {
       const uniqueSortedLG = [...new Set(diceData.map((d) => d.value))].sort(
         (a, b) => a - b,
       );
+
       const asString = uniqueSortedLG.join("");
+      const isLgStraight = qualifyStraightLg.includes(asString);
 
-      const lgStraights = ["12345", "23456"];
-      const isLGStraight = lgStraights.includes(asString);
-
-      newCategory["straightLG"].value = isLGStraight ? 30 : 0;
+      newCategory["straightLg"].value = isLgStraight ? categoryScores.straightLg : 0;
     }
 
     // Yacht
@@ -187,16 +190,19 @@ export default function App() {
         const count = diceData.filter((d) => d.value === die.value).length;
         return count >= 5;
       });
-      newCategory["yacht"].value = hasYacht ? 50 : 0;
+
+      newCategory["yacht"].value = hasYacht ? categoryScores.yacht : 0;
     }
 
-    // Change the Data
+    // Update the Score Data
     setScoreData((prevState) => ({
       ...prevState,
-      category: newCategory
+      category: newCategory,
+      total: prevState.total
     }));
-  }, [diceData]);
+  }, [gameData.rolls]);
 
+  // Dice rolling
   function rollDice() {
     if (gameData.rolls > 0) {
       setDiceData((prevState) =>
@@ -208,10 +214,12 @@ export default function App() {
         ...prevState,
         rolls: prevState.rolls - 1,
         active: true,
+        round: prevState.round
       }));
     }
   }
 
+  // Dice selection to hold for next dice roll
   function holdDie(id) {
     setDiceData((prevState) =>
       prevState.map((item) =>
@@ -220,17 +228,7 @@ export default function App() {
     );
   }
 
-  // function startGame() {
-  //   if (!gameData.active) {
-  //     setDiceData(displayDice());
-  //     setGameData(generateGameData());
-  //     setGameData((prevState) => ({
-  //       ...prevState,
-  //       active: true,
-  //     }));
-  //   }
-  // }
-
+  // Displaying Die objects
   const diceObjs = diceData.map((item) => (
     <Die
       key={item.id}
@@ -240,12 +238,11 @@ export default function App() {
     />
   ));
 
-  const categoryNames = [
-    "aces", "twos","threes", "fours","fives", "sixes", "chance","oak3","oak4","fhouse",
-    "straightSM", "straightLG", "yacht"
-  ];
+  // Click Handler for Scoreboard to confirm Category Selection for current game round
+  function handleSelectCategory(categoryName) {
+    if (!gameData.active) return
+    if (scoreData.category[categoryName].lock) return;
 
-  function handleClick(categoryName) {
     const newCategory = scoreData.category
     const newTotal = scoreData.total
 
@@ -254,26 +251,21 @@ export default function App() {
 
 
     // Update Subtotal
-    const subtotalName = ["aces", "twos","threes", "fours","fives", "sixes"]
-
-    const subtotalValue = subtotalName.reduce((sum, key) => {
+    const subtotalValue = upperCategory.reduce((sum, key) => {
       return sum + (scoreData.category[key].lock? scoreData.category[key].value : 0);
     }, 0);
 
-    console.log(subtotalValue)
     newTotal["subtotal"] = subtotalValue
 
+    // Update Bonus if subtotal qualifies
     if (scoreData.total.bonus === 0 && subtotalValue >= 63) {
-      newTotal["bonus"] = 35
+      newTotal["bonus"] = categoryScores.bonus
     }
 
     // Update Total
-    const totalValue = Object.values(scoreData.category).reduce((sum, entry) =>
-      sum + (entry.lock? entry.value : 0), 0
+    newTotal["total"] = Object.values(scoreData.category).reduce((sum, entry) =>
+      sum + (entry.lock ? entry.value : 0), 0
     ) + scoreData.total.bonus
-
-    newTotal["total"] = totalValue
-
 
     // Update Score Data
     setScoreData((prevState) => ({
@@ -285,12 +277,13 @@ export default function App() {
     newRound()
   }
 
+  // Reset Data for next round
   function newRound() {
     setGameData(prevState => (
       {
-        ...prevState,
+        rolls: 3,
         active: false,
-        rolls: 3
+        round: prevState.round + 1
       }
     ))
     setDiceData(displayDice())
@@ -304,18 +297,17 @@ export default function App() {
           <Scoreboard
             scoreData={scoreData}
             gameActive={gameData.active}
-            handleClick={handleClick}
+            handleSelectCategory={handleSelectCategory}
           />
         </div>
         <div className={"dice-board"}>
-          <h1>Dice Table</h1>
+          <h1>Your Hand</h1>
           <div>{diceObjs}</div>
           <br/>
-          <button
+          <button ref={gameButtonRef}
             onClick={() => rollDice()}
             disabled={!(gameData.rolls > 0)}
           >{`Roll Dice (${gameData.rolls} rolls left)`}</button>
-          {/*<button onClick={() => startGame()}>Start Game</button>*/}
         </div>
       </div>
     </>
