@@ -4,11 +4,15 @@ import Die from "./component/Die.jsx";
 import ScoreSheet from "./component/ScoreSheet.jsx";
 import "./App.css";
 import {categoryScores, qualifyStraightLg, qualifyStraightSm, upperCategory} from "./constants/constants.js";
+import ScoreHistory from "./component/ScoreHistory.jsx";
 
 export default function App() {
   const [diceData, setDiceData] = useState(() => displayDice());
   const [scoreData, setScoreData] = useState(() => generateScoreData());
   const [gameData, setGameData] = useState(() => generateGameData());
+
+  // { timestamp : "", score : 0, best : false }
+  const [scoreHistory, setScoreHistory] = useState([])
 
   const gameButtonRef = useRef(null);
 
@@ -94,6 +98,10 @@ export default function App() {
 
   useEffect(() => {
     gameButtonRef.current.textContent = "Roll to Begin"
+
+    const storedScoreHistory = JSON.parse(localStorage.getItem("scoreHistory"));
+    setScoreHistory(storedScoreHistory)
+
   }, [])
 
   useEffect(() => {
@@ -101,6 +109,35 @@ export default function App() {
       gameButtonRef.current.textContent = "Reset Game"
       console.log("End Game")
       console.log(`Congratulations! Final score: ${scoreData.total.total}`)
+
+      let oldScoreHistory = [...scoreHistory]
+
+      oldScoreHistory.unshift({
+        timestamp: Date.now(),
+        score: scoreData.total.total,
+        best: false,
+      })
+
+      let maxValue = -Infinity;
+
+      for (const item of oldScoreHistory) {
+        if (item.score > maxValue) {
+          maxValue = item.score
+        }
+      }
+
+
+      for (let i =0; i < oldScoreHistory.length; i++) {
+        if (oldScoreHistory[i].score === maxValue) {
+          oldScoreHistory[i].best = true
+        }else{
+          oldScoreHistory[i].best = false
+        }
+      }
+
+      setScoreHistory(oldScoreHistory);
+      localStorage.setItem("scoreHistory", JSON.stringify(oldScoreHistory))
+
 
     }
   }, [gameData.round]);
@@ -329,6 +366,11 @@ export default function App() {
             onClick={gameData.round <= 13? () => rollDice(): () => resetGame()}
             disabled={!(gameData.rolls > 0)}
           >{gameButtonDisplay()}</button>
+
+          <br/>
+          <br/>
+          <br/>
+          <ScoreHistory scoreHistory={scoreHistory}/>
         </div>
       </div>
     </>
