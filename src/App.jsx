@@ -11,7 +11,7 @@ export default function App() {
 
   function displayDice() {
     return new Array(5).fill(0).map(() => ({
-      value: 6,
+      value: 1,
       isHeld: false,
       id: nanoid(),
     }));
@@ -240,16 +240,46 @@ export default function App() {
     />
   ));
 
+  const categoryNames = [
+    "aces", "twos","threes", "fours","fives", "sixes", "chance","oak3","oak4","fhouse",
+    "straightSM", "straightLG", "yacht"
+  ];
 
   function handleClick(categoryName) {
     const newCategory = scoreData.category
+    const newTotal = scoreData.total
 
     // Lock the Clicked Category
     newCategory[categoryName].lock = true
 
+
+    // Update Subtotal
+    const subtotalName = ["aces", "twos","threes", "fours","fives", "sixes"]
+
+    const subtotalValue = subtotalName.reduce((sum, key) => {
+      return sum + (scoreData.category[key].lock? scoreData.category[key].value : 0);
+    }, 0);
+
+    console.log(subtotalValue)
+    newTotal["subtotal"] = subtotalValue
+
+    if (scoreData.total.bonus === 0 && subtotalValue >= 63) {
+      newTotal["bonus"] = 35
+    }
+
+    // Update Total
+    const totalValue = Object.values(scoreData.category).reduce((sum, entry) =>
+      sum + (entry.lock? entry.value : 0), 0
+    ) + scoreData.total.bonus
+
+    newTotal["total"] = totalValue
+
+
+    // Update Score Data
     setScoreData((prevState) => ({
       ...prevState,
       category: newCategory,
+      total: newTotal
     }));
 
     newRound()
