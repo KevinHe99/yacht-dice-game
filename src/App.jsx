@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import {nanoid} from "nanoid";
 import Die from "./component/Die.jsx";
-import Scoreboard from "./component/Scoreboard.jsx";
+import ScoreSheet from "./component/ScoreSheet.jsx";
 import "./App.css";
 import {categoryScores, qualifyStraightLg, qualifyStraightSm, upperCategory} from "./constants/constants.js";
 
@@ -241,7 +241,7 @@ export default function App() {
     />
   ));
 
-  // Click Handler for Scoreboard to confirm Category Selection for current game round
+  // Click Handler for ScoreSheet to confirm Category Selection for current game round
   function handleSelectCategory(categoryName) {
     if (!gameData.active) return
     if (scoreData.category[categoryName].lock) return;
@@ -315,7 +315,7 @@ export default function App() {
       <h1>Yacht Dice Game</h1>
       <div className={"container"}>
         <div className={"scoreboard"}>
-          <Scoreboard
+          <ScoreSheet
             scoreData={scoreData}
             gameActive={gameData.active}
             handleSelectCategory={handleSelectCategory}

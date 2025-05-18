@@ -1,6 +1,6 @@
 import {categoryNames} from "../constants/constants.js";
 
-export default function Scoreboard({ scoreData, gameActive, handleSelectCategory }) {
+export default function ScoreSheet({ scoreData, gameActive, handleSelectCategory }) {
   function displayScore(gameActiveState, lock, score) {
     return gameActiveState || lock ? score : "";
   }
@@ -17,7 +17,7 @@ export default function Scoreboard({ scoreData, gameActive, handleSelectCategory
 
   return (
     <>
-      <h1>Scoreboard</h1>
+      <h1>Score Sheet</h1>
       <table>
         <tbody>
           <tr>
