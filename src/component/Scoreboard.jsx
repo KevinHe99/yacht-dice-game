@@ -17,7 +17,8 @@ export default function Scoreboard({ scoreData, gameActive, handleClick }) {
       <table>
         <tbody>
           <tr>
-            <th colSpan={2}>Upper Section</th>
+            <th style={{backgroundColor:"#495057", color:"#E9ECEF"}}>Categories</th>
+            <th style={{backgroundColor:"#495057", color:"#E9ECEF"}}>Scores</th>
           </tr>
           <tr>
             <td>Aces</td>
@@ -80,34 +81,27 @@ export default function Scoreboard({ scoreData, gameActive, handleClick }) {
             </td>
           </tr>
           <tr>
-            <td>Total Score</td>
-            <td className={"score"}>
+            <td style={{backgroundColor:"#495057", color:"#E9ECEF"}}>Subtotal</td>
+            <td style={{backgroundColor:"#ADB5BD", color:"#E9ECEF"}} className={"score"}>
               {scoreData.upper.score}
               <span style={{ fontWeight: "bold" }}>/63</span>
             </td>
           </tr>
           <tr>
-            <td>Bonus</td>
-            <td className={"score"}>
+            <td style={{backgroundColor:"#495057", color:"#E9ECEF"}}>+35 Bonus</td>
+            <td style={{backgroundColor:"#ADB5BD", color:"#E9ECEF"}} className={"score"}>
               {scoreData.upper.bonus.lock
                 ? `+${scoreData.upper.bonus.value}`
                 : ""}
             </td>
           </tr>
-          <tr>
-            <td style={{ fontWeight: "bold" }}>Upper Score</td>
-            <td className={"score"}>
-              <span style={{ fontWeight: "bold" }}>
-                {scoreData.upper.scoreWBonus}
-              </span>
-            </td>
-          </tr>
+
+          {/**/}
+
           <tr>
             <td className="seperator" colSpan={2}></td>
           </tr>
-          <tr>
-            <th colSpan={2}>Lower Section</th>
-          </tr>
+
           <tr>
             <td>Chance</td>
             <td className={"score"}>
@@ -117,6 +111,10 @@ export default function Scoreboard({ scoreData, gameActive, handleClick }) {
                 scoreData.lower.chance.value,
               )}
             </td>
+          </tr>
+
+          <tr>
+            <td className="seperator" colSpan={2}></td>
           </tr>
           <tr>
             <td>3 of a Kind</td>
@@ -179,19 +177,8 @@ export default function Scoreboard({ scoreData, gameActive, handleClick }) {
             </td>
           </tr>
           <tr>
-            <td style={{ fontWeight: "bold" }}>Lower Score</td>
-            <td className={"score"}>
-              <span style={{ fontWeight: "bold" }}>
-                {scoreData.lower.score}
-              </span>
-            </td>
-          </tr>
-          <tr>
-            <td className="seperator" colSpan={2}></td>
-          </tr>
-          <tr>
-            <td style={{ fontWeight: "bold" }}>Total Score</td>
-            <td className={"score"}>
+            <td style={{backgroundColor:"#495057", color:"#E9ECEF"}}>Total Score</td>
+            <td style={{backgroundColor:"#ADB5BD", color:"#E9ECEF"}} className={"score"}>
               <span style={{ fontWeight: "bold" }}>{scoreData.total}</span>
             </td>
           </tr>
