@@ -10,7 +10,7 @@ export const categoryNames = [
   "oak4",
   "fHouse",
   "straightSm",
-  "straightLh",
+  "straightLg",
   "yacht",
 ];
 

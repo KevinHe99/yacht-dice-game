@@ -3,7 +3,7 @@ import {nanoid} from "nanoid";
 import Die from "./component/Die.jsx";
 import Scoreboard from "./component/Scoreboard.jsx";
 import "./App.css";
-import {categoryScores, qualifyStraightSm, qualifyStraightLg, upperCategory} from "./constants/constants.js";
+import {categoryScores, qualifyStraightLg, qualifyStraightSm, upperCategory} from "./constants/constants.js";
 
 export default function App() {
   const [diceData, setDiceData] = useState(() => displayDice());
@@ -98,8 +98,10 @@ export default function App() {
 
   useEffect(() => {
     if (gameData.round > 13) {
+      gameButtonRef.current.textContent = "Reset Game"
       console.log("End Game")
       console.log(`Congratulations! Final score: ${scoreData.total.total}`)
+
     }
   }, [gameData.round]);
 
@@ -162,23 +164,23 @@ export default function App() {
 
     // Sm. Straight
     if (!newCategory["straightSm"].lock) {
-      const uniqueSortedSM = [...new Set(diceData.map((d) => d.value))].sort(
+      const uniqueSortedSm = [...new Set(diceData.map((d) => d.value))].sort(
         (a, b) => a - b,
       );
 
-      const asString = uniqueSortedSM.join("");
-      const isSmStraight = qualifyStraightSm.includes(asString);
+      const asString = uniqueSortedSm.join("");
+      const isSmStraight = qualifyStraightSm.some(str => asString.includes(str));
 
       newCategory["straightSm"].value = isSmStraight ? categoryScores.straightSm : 0;
     }
 
     // Lg. Straight
     if (!newCategory["straightLg"].lock) {
-      const uniqueSortedLG = [...new Set(diceData.map((d) => d.value))].sort(
+      const uniqueSortedLg = [...new Set(diceData.map((d) => d.value))].sort(
         (a, b) => a - b,
       );
 
-      const asString = uniqueSortedLG.join("");
+      const asString = uniqueSortedLg.join("");
       const isLgStraight = qualifyStraightLg.includes(asString);
 
       newCategory["straightLg"].value = isLgStraight ? categoryScores.straightLg : 0;
@@ -221,6 +223,7 @@ export default function App() {
 
   // Dice selection to hold for next dice roll
   function holdDie(id) {
+    if (!gameData.active) return;
     setDiceData((prevState) =>
       prevState.map((item) =>
         item.id === id ? { ...item, isHeld: !item.isHeld } : item,
@@ -289,6 +292,24 @@ export default function App() {
     setDiceData(displayDice())
   }
 
+  function gameButtonDisplay() {
+    if (gameData.rolls === 3) {
+      return `Roll Dice`
+    }else if (gameData.rolls > 0) {
+      return `Roll Dice (${gameData.rolls} rolls left)`
+    }else if (gameData.rolls === 0) {
+      return `Select a category to start next round`
+    }
+
+  }
+
+  function resetGame() {
+    gameButtonRef.current.textContent = "Roll to Begin"
+    setScoreData(generateScoreData())
+    setDiceData(displayDice)
+    setGameData(generateGameData())
+  }
+
   return (
     <>
       <h1>Yacht Dice Game</h1>
@@ -305,9 +326,9 @@ export default function App() {
           <div>{diceObjs}</div>
           <br/>
           <button ref={gameButtonRef}
-            onClick={() => rollDice()}
+            onClick={gameData.round <= 13? () => rollDice(): () => resetGame()}
             disabled={!(gameData.rolls > 0)}
-          >{`Roll Dice (${gameData.rolls} rolls left)`}</button>
+          >{gameButtonDisplay()}</button>
         </div>
       </div>
     </>
