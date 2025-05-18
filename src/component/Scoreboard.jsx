@@ -2,14 +2,19 @@ export default function Scoreboard({ scoreData, gameActive, handleClick }) {
   function displayScore(gameActiveState, lock, score) {
     return gameActiveState || lock ? score : "";
   }
+  const categoryNames = [
+    "aces", "twos","threes", "fours","fives", "sixes", "chance",
+    "oak3","oak4","fhouse", "straightSM", "straightLG", "yacht"
+  ];
 
-  // const scoreBoxStyle = (gameActiveState, lock) => {
-  //   return {
-  //     textAlign: "right",
-  //     width: "50px",
-  //     backgroundColor: gameActiveState && !lock ? "#EDBF85" : "",
-  //   };
-  // };
+  const scoreBoxStyle = (lock) => {
+    return {
+      textAlign: "right",
+      width: "50px",
+      fontWeight: lock? "bold" : ""
+      // backgroundColor: gameActiveState && !lock ? "#EDBF85" : "",
+    };
+  };
 
   return (
     <>
@@ -22,76 +27,76 @@ export default function Scoreboard({ scoreData, gameActive, handleClick }) {
           </tr>
           <tr>
             <td>Aces</td>
-            <td className={"score no-select"} onClick={handleClick}>
+            <td style={scoreBoxStyle(scoreData.category.aces.lock)} className={"score no-select"} onClick={() =>handleClick(categoryNames[0])}>
               {displayScore(
                 gameActive,
-                scoreData.upper.aces.lock,
-                scoreData.upper.aces.value,
+                scoreData.category.aces.lock,
+                scoreData.category.aces.value,
               )}
             </td>
           </tr>
           <tr>
             <td>Twos</td>
-            <td className={"score"}>
+            <td style={scoreBoxStyle(scoreData.category.twos.lock)} className={"score no-select"} onClick={() =>handleClick(categoryNames[1])}>
               {displayScore(
                 gameActive,
-                scoreData.upper.twos.lock,
-                scoreData.upper.twos.value,
+                scoreData.category.twos.lock,
+                scoreData.category.twos.value,
               )}
             </td>
           </tr>
           <tr>
             <td>Threes</td>
-            <td className={"score"}>
+            <td style={scoreBoxStyle(scoreData.category.threes.lock)} className={"score no-select"} onClick={() =>handleClick(categoryNames[2])}>
               {displayScore(
                 gameActive,
-                scoreData.upper.threes.lock,
-                scoreData.upper.threes.value,
+                scoreData.category.threes.lock,
+                scoreData.category.threes.value,
               )}
             </td>
           </tr>
           <tr>
             <td>Fours</td>
-            <td className={"score"}>
+            <td style={scoreBoxStyle(scoreData.category.fours.lock)} className={"score no-select"} onClick={() =>handleClick(categoryNames[3])}>
               {displayScore(
                 gameActive,
-                scoreData.upper.fours.lock,
-                scoreData.upper.fours.value,
+                scoreData.category.fours.lock,
+                scoreData.category.fours.value,
               )}
             </td>
           </tr>
           <tr>
             <td>Fives</td>
-            <td className={"score"}>
+            <td style={scoreBoxStyle(scoreData.category.fives.lock)} className={"score no-select"} onClick={() =>handleClick(categoryNames[4])}>
               {displayScore(
                 gameActive,
-                scoreData.upper.fives.lock,
-                scoreData.upper.fives.value,
+                scoreData.category.fives.lock,
+                scoreData.category.fives.value,
               )}
             </td>
           </tr>
           <tr>
             <td>Sixes</td>
-            <td className={"score"}>
+            <td style={scoreBoxStyle(scoreData.category.sixes.lock)} className={"score no-select"} onClick={() =>handleClick(categoryNames[5])}>
               {displayScore(
                 gameActive,
-                scoreData.upper.sixes.lock,
-                scoreData.upper.sixes.value,
+                scoreData.category.sixes.lock,
+                scoreData.category.sixes.value,
               )}
             </td>
           </tr>
           <tr>
             <td style={{backgroundColor:"#495057", color:"#E9ECEF"}}>Subtotal</td>
             <td style={{backgroundColor:"#ADB5BD", color:"#E9ECEF"}} className={"score"}>
-              {scoreData.upper.score}
+              {scoreData.total.subtotal}
               <span style={{ fontWeight: "bold" }}>/63</span>
             </td>
           </tr>
           <tr>
             <td style={{backgroundColor:"#495057", color:"#E9ECEF"}}>+35 Bonus</td>
             <td style={{backgroundColor:"#ADB5BD", color:"#E9ECEF"}} className={"score"}>
-              {scoreData.upper.bonus.lock
-                ? `+${scoreData.upper.bonus.value}`
+              {scoreData.total.bonus !== 0
+                ? `+${scoreData.total.bonus}`
                 : ""}
             </td>
           </tr>
@@ -104,11 +109,11 @@ export default function Scoreboard({ scoreData, gameActive, handleClick }) {
 
           <tr>
             <td>Chance</td>
-            <td className={"score"}>
+            <td style={scoreBoxStyle(scoreData.category.chance.lock)} className={"score no-select"} onClick={() =>handleClick(categoryNames[6])}>
               {displayScore(
                 gameActive,
-                scoreData.lower.chance.lock,
-                scoreData.lower.chance.value,
+                scoreData.category.chance.lock,
+                scoreData.category.chance.value,
               )}
             </td>
           </tr>
@@ -118,68 +123,68 @@ export default function Scoreboard({ scoreData, gameActive, handleClick }) {
           </tr>
           <tr>
             <td>3 of a Kind</td>
-            <td className={"score"}>
+            <td style={scoreBoxStyle(scoreData.category.oak3.lock)} className={"score no-select"} onClick={() =>handleClick(categoryNames[7])}>
               {displayScore(
                 gameActive,
-                scoreData.lower.oak3.lock,
-                scoreData.lower.oak3.value,
+                scoreData.category.oak3.lock,
+                scoreData.category.oak3.value,
               )}
             </td>
           </tr>
           <tr>
             <td>4 of a Kind</td>
-            <td className={"score"}>
+            <td style={scoreBoxStyle(scoreData.category.oak4.lock)} className={"score no-select"} onClick={() =>handleClick(categoryNames[8])}>
               {displayScore(
                 gameActive,
-                scoreData.lower.oak4.lock,
-                scoreData.lower.oak4.value,
+                scoreData.category.oak4.lock,
+                scoreData.category.oak4.value,
               )}
             </td>
           </tr>
           <tr>
             <td>Full House</td>
-            <td className={"score"}>
+            <td style={scoreBoxStyle(scoreData.category.fhouse.lock)} className={"score no-select"} onClick={() =>handleClick(categoryNames[9])}>
               {displayScore(
                 gameActive,
-                scoreData.lower.fhouse.lock,
-                scoreData.lower.fhouse.value,
+                scoreData.category.fhouse.lock,
+                scoreData.category.fhouse.value,
               )}
             </td>
           </tr>
           <tr>
             <td>Sm. Straight</td>
-            <td className={"score"}>
+            <td style={scoreBoxStyle(scoreData.category.straightSM.lock)} className={"score no-select"} onClick={() =>handleClick(categoryNames[10])}>
               {displayScore(
                 gameActive,
-                scoreData.lower.straightSM.lock,
-                scoreData.lower.straightSM.value,
+                scoreData.category.straightSM.lock,
+                scoreData.category.straightSM.value,
               )}
             </td>
           </tr>
           <tr>
             <td>Lg. Straight</td>
-            <td className={"score"}>
+            <td style={scoreBoxStyle(scoreData.category.straightLG.lock)} className={"score no-select"} onClick={() =>handleClick(categoryNames[11])}>
               {displayScore(
                 gameActive,
-                scoreData.lower.straightLG.lock,
-                scoreData.lower.straightLG.value,
+                scoreData.category.straightLG.lock,
+                scoreData.category.straightLG.value,
               )}
             </td>
           </tr>
           <tr>
             <td>Yacht</td>
-            <td className={"score"}>
+            <td style={scoreBoxStyle(scoreData.category.yacht.lock)} className={"score no-select"} onClick={() =>handleClick(categoryNames[12])}>
               {displayScore(
                 gameActive,
-                scoreData.lower.yacht.lock,
-                scoreData.lower.yacht.value,
+                scoreData.category.yacht.lock,
+                scoreData.category.yacht.value,
               )}
             </td>
           </tr>
           <tr>
             <td style={{backgroundColor:"#495057", color:"#E9ECEF"}}>Total Score</td>
             <td style={{backgroundColor:"#ADB5BD", color:"#E9ECEF"}} className={"score"}>
-              <span style={{ fontWeight: "bold" }}>{scoreData.total}</span>
+              <span style={{ fontWeight: "bold" }}>{scoreData.total.total}</span>
             </td>
           </tr>
         </tbody>

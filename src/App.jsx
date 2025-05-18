@@ -27,9 +27,12 @@ export default function App() {
 
   function generateScoreData() {
     return {
-      upper: {
-        score: 0,
-        scoreWBonus: 0,
+      total: {
+        subtotal: 0,
+        bonus:0,
+        total:0,
+      },
+      category: {
         aces: {
           value: 0,
           lock: false,
@@ -54,13 +57,6 @@ export default function App() {
           value: 0,
           lock: false,
         },
-        bonus: {
-          value: 0,
-          lock: false,
-        },
-      },
-      lower: {
-        score: 0,
         chance: {
           value: 0,
           lock: false,
@@ -90,7 +86,6 @@ export default function App() {
           lock: false,
         },
       },
-      total: 0,
     };
   }
 
@@ -106,17 +101,16 @@ export default function App() {
     if (!gameData.active) return;
     console.log("effect post")
 
-    const newUpper = { ...scoreData.upper };
-    const newLower = { ...scoreData.lower };
+    const newCategory = {...scoreData.category};
 
     // Calculate Totals from 1 - 6
     for (let i = 1; i <= 6; i++) {
       const count = diceData.filter((d) => d.value === i).length;
       const key = ["aces", "twos", "threes", "fours", "fives", "sixes"][i - 1];
 
-      if (!newUpper[key].lock) {
-        newUpper[key] = {
-          ...newUpper[key],
+      if (!newCategory[key].lock) {
+        newCategory[key] = {
+          ...newCategory[key],
           value: count * i,
         };
       }
@@ -126,30 +120,30 @@ export default function App() {
     const sumOfHand = diceData.reduce((sum, die) => sum + die.value, 0);
 
     // Chance
-    if (!newLower["chance"].lock) {
-      newLower["chance"].value = sumOfHand;
+    if (!newCategory["chance"].lock) {
+      newCategory["chance"].value = sumOfHand;
     }
 
     // Three of a kind
-    if (!newLower["oak3"].lock) {
+    if (!newCategory["oak3"].lock) {
       const hasThreeOfKind = diceData.some((die) => {
         const count = diceData.filter((d) => d.value === die.value).length;
         return count >= 3;
       });
-      newLower["oak3"].value = hasThreeOfKind ? sumOfHand : 0;
+      newCategory["oak3"].value = hasThreeOfKind ? sumOfHand : 0;
     }
 
     // Four of a kind
-    if (!newLower["oak4"].lock) {
+    if (!newCategory["oak4"].lock) {
       const hasFourOfKind = diceData.some((die) => {
         const count = diceData.filter((d) => d.value === die.value).length;
         return count >= 4;
       });
-      newLower["oak4"].value = hasFourOfKind ? sumOfHand : 0;
+      newCategory["oak4"].value = hasFourOfKind ? sumOfHand : 0;
     }
 
     // Full House
-    if (!newLower["fhouse"].lock) {
+    if (!newCategory["fhouse"].lock) {
       const fhCounts = {};
       diceData.forEach((die) => {
         fhCounts[die.value] = (fhCounts[die.value] || 0) + 1;
@@ -158,49 +152,48 @@ export default function App() {
       const values = Object.values(fhCounts);
       const isFullHouse = values.includes(3) && values.includes(2);
 
-      newLower["fhouse"].value = isFullHouse ? 25 : 0;
+      newCategory["fhouse"].value = isFullHouse ? 25 : 0;
     }
 
     // Sm. Straight
-    if (!newLower["straightSM"].lock) {
+    if (!newCategory["straightSM"].lock) {
       const uniqueSortedSM = [...new Set(diceData.map((d) => d.value))].sort(
         (a, b) => a - b,
       );
       const asString = uniqueSortedSM.join("");
 
-      const smStraights = ["12345", "23456"];
+      const smStraights =["1234", "2345", "3456"];
       const isSMStraight = smStraights.includes(asString);
 
-      newLower["straightSM"].value = isSMStraight ? 30 : 0;
+      newCategory["straightSM"].value = isSMStraight ? 30 : 0;
     }
 
     // Lg. Straight
-    if (!newLower["straightLG"].lock) {
+    if (!newCategory["straightLG"].lock) {
       const uniqueSortedLG = [...new Set(diceData.map((d) => d.value))].sort(
         (a, b) => a - b,
       );
       const asString = uniqueSortedLG.join("");
 
-      const lgStraights = ["1234", "2345", "3456"];
+      const lgStraights = ["12345", "23456"];
       const isLGStraight = lgStraights.includes(asString);
 
-      newLower["straightSM"].value = isLGStraight ? 30 : 0;
+      newCategory["straightLG"].value = isLGStraight ? 30 : 0;
     }
 
     // Yacht
-    if (!newLower["yacht"].lock) {
+    if (!newCategory["yacht"].lock) {
       const hasYacht = diceData.some((die) => {
         const count = diceData.filter((d) => d.value === die.value).length;
         return count >= 5;
       });
-      newLower["yacht"].value = hasYacht ? 50 : 0;
+      newCategory["yacht"].value = hasYacht ? 50 : 0;
     }
 
     // Change the Data
     setScoreData((prevState) => ({
       ...prevState,
-      upper: newUpper,
-      lower: newLower,
+      category: newCategory
     }));
   }, [diceData]);
 
@@ -247,16 +240,19 @@ export default function App() {
     />
   ));
 
-  function handleClick() {
-    const newUpper = scoreData.upper
-    newUpper["aces"].lock = true
+
+  function handleClick(categoryName) {
+    const newCategory = scoreData.category
+
+    // Lock the Clicked Category
+    newCategory[categoryName].lock = true
 
     setScoreData((prevState) => ({
       ...prevState,
-      upper: newUpper,
+      category: newCategory,
     }));
-    newRound()
 
+    newRound()
   }
 
   function newRound() {
